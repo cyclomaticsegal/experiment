@@ -9,6 +9,7 @@ using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 using Microsoft.ServiceFabric.Services.Remoting.FabricTransport;
 using Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Client;
+using Utility;
 
 namespace experimentApi.Controllers
 {
@@ -77,6 +78,24 @@ namespace experimentApi.Controllers
                     }
                 }
             }
+        }
+
+        [HttpGet]
+        [Route("Put100LogMessagesOnQueue")]
+        public async Task<string> Put100LogMessagesOnQueue()
+        {
+            IUtilityService client = proxyFactory.CreateServiceProxy<IUtilityService>(new Uri("fabric:/experiment/Utility"));
+            var messagesOnQ = await client.Add100MessagesToTheQueue();
+            return messagesOnQ.ToString();
+        }
+
+        [HttpGet]
+        [Route("StartPoppingTheQueue")]
+        public async Task<string> StartPoppingTheQueue()
+        {
+            IUtilityService client = proxyFactory.CreateServiceProxy<IUtilityService>(new Uri("fabric:/experiment/Utility"));
+            var messagesOnQ = await client.StartPoppingOffQueue();
+            return messagesOnQ.ToString();
         }
 
         [HttpGet]

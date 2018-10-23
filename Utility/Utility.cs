@@ -17,6 +17,8 @@ namespace Utility
     public interface IUtilityService : IService
     {
         Task<bool> InterServiceRqCallAsync(InterServiceMessage msg);
+        Task<long> Add100MessagesToTheQueue();
+        Task<bool> StartPoppingOffQueue();
     }
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
@@ -26,6 +28,28 @@ namespace Utility
         public Utility(StatefulServiceContext context)
             : base(context)
         { }
+
+        public async Task<long> Add100MessagesToTheQueue()
+        {
+            var queue = await StateManager.GetOrAddAsync<IReliableQueue<InterServiceMessage>>("loggingQueue");
+            for(var i = 0; i <= 10000; i++)
+            {
+                var msg = new InterServiceMessage() { Name = i.ToString() };
+                using (var tx = StateManager.CreateTransaction())
+                {
+                    await queue.EnqueueAsync(tx, msg);
+
+                    await tx.CommitAsync();
+                }
+            }
+            long count;
+            using (var tx = StateManager.CreateTransaction())
+            {
+                count = queue.GetCountAsync(tx).Result;
+            }
+
+            return await Task.FromResult<long>(count);
+        }
 
         public async Task<bool> InterServiceRqCallAsync(InterServiceMessage msg)
         {
@@ -39,6 +63,26 @@ namespace Utility
                 await tx.CommitAsync();
             }
             return await Task.FromResult<bool>(true);
+        }
+
+        public async Task<bool> StartPoppingOffQueue()
+        {
+            Task.Run(async () =>
+            {
+                var queue = await StateManager.GetOrAddAsync<IReliableQueue<InterServiceMessage>>("loggingQueue");
+
+                for (var i = 0; i <= 100; i++)
+                {
+                    using (var tx = StateManager.CreateTransaction())
+                    {
+                        await queue.TryDequeueAsync(tx);
+
+                        await tx.CommitAsync();
+                    }
+                    Thread.Sleep(10);
+                }
+            });
+            return await Task.FromResult(true);
         }
 
         /// <summary>
