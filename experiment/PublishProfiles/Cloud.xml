@@ -20,7 +20,7 @@
                                     AzureActiveDirectory="true"
                                     ServerCertThumbprint="0123456789012345678901234567890123456789" />
   -->
-  <ClusterConnectionParameters ConnectionEndpoint="experimental.australiasoutheast.cloudapp.azure.com:19000" X509Credential="true" ServerCertThumbprint="51AACAA99774BE2022070F6C46FD850ECE5613A4" FindType="FindByThumbprint" FindValue="51AACAA99774BE2022070F6C46FD850ECE5613A4" StoreLocation="CurrentUser" StoreName="My" />
+  <ClusterConnectionParameters ConnectionEndpoint="experimental2.australiasoutheast.cloudapp.azure.com:19000" X509Credential="true" ServerCertThumbprint="51AACAA99774BE2022070F6C46FD850ECE5613A4" FindType="FindByThumbprint" FindValue="51AACAA99774BE2022070F6C46FD850ECE5613A4" StoreLocation="CurrentUser" StoreName="My" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
   <CopyPackageParameters CompressPackage="true" />
 </PublishProfile>
