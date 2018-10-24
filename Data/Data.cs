@@ -13,14 +13,14 @@ using Microsoft.ServiceFabric.Services.Remoting;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 using Microsoft.ServiceFabric.Services.Remoting.FabricTransport;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
-using Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Client;
+using Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Client;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Microsoft.WindowsAzure.Storage.Table;
 using Utility;
 
-[assembly: FabricTransportServiceRemotingProvider(RemotingListenerVersion = RemotingListenerVersion.V2, RemotingClientVersion = RemotingClientVersion.V2)]
+[assembly: FabricTransportServiceRemotingProvider(RemotingListenerVersion = RemotingListenerVersion.V1, RemotingClientVersion = RemotingClientVersion.V1)]
 namespace Data
 {
     public interface IDataService : IService
