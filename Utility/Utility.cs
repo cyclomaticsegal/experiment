@@ -9,6 +9,7 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting;
 using Microsoft.ServiceFabric.Services.Remoting.FabricTransport;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 [assembly: FabricTransportServiceRemotingProvider(RemotingListenerVersion = RemotingListenerVersion.V1, RemotingClientVersion = RemotingClientVersion.V1)]
@@ -107,9 +108,14 @@ namespace Utility
         /// For more information on service communication, see https://aka.ms/servicefabricservicecommunication
         /// </remarks>
         /// <returns>A collection of listeners.</returns>
+        //protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
+        //{
+        //    return this.CreateServiceRemotingReplicaListeners();
+        //}
+
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return this.CreateServiceRemotingReplicaListeners();
+            return new[] { new ServiceReplicaListener(context => new FabricTransportServiceRemotingListener(context, this), listenOnSecondary: true) };
         }
 
         /// <summary>

@@ -14,6 +14,7 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 using Microsoft.ServiceFabric.Services.Remoting.FabricTransport;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Client;
+using Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
@@ -163,9 +164,14 @@ namespace Data
         /// For more information on service communication, see https://aka.ms/servicefabricservicecommunication
         /// </remarks>
         /// <returns>A collection of listeners.</returns>
+        //protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
+        //{
+        //    return this.CreateServiceRemotingReplicaListeners();
+        //}
+
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return this.CreateServiceRemotingReplicaListeners();
+            return new[] { new ServiceReplicaListener(context => new FabricTransportServiceRemotingListener(context, this), listenOnSecondary: true) };
         }
 
         /// <summary>
