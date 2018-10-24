@@ -8,6 +8,9 @@
     <Parameter Name="Data_PartitionCount" DefaultValue="1" />
     <Parameter Name="Data_TargetReplicaSetSize" DefaultValue="5" />
     <Parameter Name="experimentApi_InstanceCount" DefaultValue="-1" />
+    <Parameter Name="Data_PlacementConstraints" DefaultValue="main" />
+    <Parameter Name="Util_PlacementConstraints" DefaultValue="util" />
+    <Parameter Name="Api_PlacementConstraints" DefaultValue="main" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -32,22 +35,22 @@
          The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
     <Service Name="Utility" ServicePackageActivationMode="ExclusiveProcess">
       <StatefulService ServiceTypeName="UtilityType" TargetReplicaSetSize="[Utility_TargetReplicaSetSize]" MinReplicaSetSize="[Utility_MinReplicaSetSize]">
-        <!--<UniformInt64Partition PartitionCount="[Data_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />-->
         <!--<UniformInt64Partition PartitionCount="[Utility_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />-->
+        <!--<UniformInt64Partition PartitionCount="[Data_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />-->
         <SingletonPartition />
-        <!--<PlacementConstraints>(NodeTypeName==util)</PlacementConstraints>-->
-        <!--<PlacementConstraints>(NodeTypeName==main)</PlacementConstraints>-->
+        <PlacementConstraints>[Util_PlacementConstraints]</PlacementConstraints>
       </StatefulService>
     </Service>
     <Service Name="Data" ServicePackageActivationMode="ExclusiveProcess">
       <StatefulService ServiceTypeName="DataType" TargetReplicaSetSize="[Data_TargetReplicaSetSize]" MinReplicaSetSize="[Data_MinReplicaSetSize]">
         <SingletonPartition />
+        <PlacementConstraints>[Data_PlacementConstraints]</PlacementConstraints>
       </StatefulService>
     </Service>
     <Service Name="experimentApi" ServicePackageActivationMode="ExclusiveProcess">
       <StatelessService ServiceTypeName="experimentApiType" InstanceCount="[experimentApi_InstanceCount]">
         <SingletonPartition />
-        <!--<PlacementConstraints>(NodeTypeName==main)</PlacementConstraints>-->
+        <PlacementConstraints>[Api_PlacementConstraints]</PlacementConstraints>
       </StatelessService>
     </Service>
   </DefaultServices>

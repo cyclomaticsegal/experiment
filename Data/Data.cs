@@ -36,11 +36,17 @@ namespace Data
     /// </summary>
     internal sealed class Data : StatefulService, IDataService
     {
+        #region Private Members
+
         ServiceProxyFactory proxyFactory = new ServiceProxyFactory((c) =>
         {
             var settings = new FabricTransportRemotingSettings();
             return new FabricTransportServiceRemotingClientFactory(settings);
         });
+
+        #endregion
+
+        #region Public Interface
 
         public async Task<long> InterServiceRqCall()
         {
@@ -49,13 +55,7 @@ namespace Data
             IUtilityService client = proxyFactory.CreateServiceProxy<IUtilityService>(new Uri("fabric:/experiment/Utility"));
             Stopwatch s = new Stopwatch();
             s.Start();
-            //Parallel.ForEach(range, async (current) =>
-            //{
-            //    await client.InterServiceRqCallAsync(new InterServiceMessage()
-            //    {
-            //         Name = current.ToString(),
-            //    });
-            //});
+            
             try
             {
                 await client.InterServiceRqCallAsync(new InterServiceMessage()
@@ -64,7 +64,7 @@ namespace Data
                 });
             }catch(Exception ex)
             {
-
+                ServiceEventSource.Current.Message(ex.Message);
             }
             
             s.Stop();
@@ -134,8 +134,6 @@ namespace Data
             return await Task.Run<long>(() => s.ElapsedMilliseconds);
         }
 
-        public Data(StatefulServiceContext context): base(context){ }
-
         public async Task<long> GetCurrentCounter()
         {
             var myDictionary = await StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
@@ -147,6 +145,16 @@ namespace Data
             }
             return result;
         }
+
+        #endregion
+
+        #region Constructor
+
+        public Data(StatefulServiceContext context): base(context){ }
+
+        #endregion
+
+        #region Service Fabric Overrides
 
         /// <summary>
         /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.
@@ -193,5 +201,7 @@ namespace Data
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
         }
+
+        #endregion
     }
 }

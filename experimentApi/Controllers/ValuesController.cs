@@ -22,11 +22,18 @@ namespace experimentApi.Controllers
             return new FabricTransportServiceRemotingClientFactory(settings);
         });
 
-        // GET api/values
+        // Default Get
         [HttpGet]
-        public IEnumerable<string> Get()
+        public string Get()
         {
-            return new string[] { "value1", "value2" };
+            return Heartbeat();
+        }
+
+        [HttpGet]
+        [Route("Heartbeat")]
+        public string Heartbeat()
+        {
+            return "UTC Heartbeat at: " + DateTime.UtcNow.ToLongDateString();
         }
 
         [HttpGet]
@@ -127,15 +134,14 @@ namespace experimentApi.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<string> Get(int id)
+        [Route("GetCounter")]
+        public async Task<string> GetCounter(int id)
         {
-
             IDataService client = proxyFactory.CreateServiceProxy<IDataService>(new Uri("fabric:/experiment/Data"));
             try
             {
                 var message = await client.GetCurrentCounter();
                 return message.ToString();
-
             }
             catch (Exception ex)
             {

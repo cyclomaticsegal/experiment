@@ -3,10 +3,13 @@
   <Parameters>
     <Parameter Name="Utility_PartitionCount" Value="1" />
     <Parameter Name="Utility_MinReplicaSetSize" Value="3" />
-    <Parameter Name="Utility_TargetReplicaSetSize" Value="3" />
+    <Parameter Name="Utility_TargetReplicaSetSize" Value="5" />
     <Parameter Name="Data_PartitionCount" Value="1" />
     <Parameter Name="Data_MinReplicaSetSize" Value="3" />
-    <Parameter Name="Data_TargetReplicaSetSize" Value="3" />
+    <Parameter Name="Data_TargetReplicaSetSize" Value="5" />
     <Parameter Name="experimentApi_InstanceCount" Value="-1" />
+    <Parameter Name="Data_PlacementConstraints" Value="main" />
+    <Parameter Name="Util_PlacementConstraints" Value="util" />
+    <Parameter Name="Api_PlacementConstraints" Value="main" />
   </Parameters>
 </Application>

@@ -16,23 +16,27 @@ namespace Utility
 {
     public interface IUtilityService : IService
     {
-        Task<bool> InterServiceRqCallAsync(InterServiceMessage msg);
+        Task<long> InterServiceRqCallAsync(InterServiceMessage msg);
         Task<long> Add100MessagesToTheQueue();
         Task<bool> StartPoppingOffQueue();
     }
-    /// <summary>
-    /// An instance of this class is created for each service replica by the Service Fabric runtime.
-    /// </summary>
+
     internal sealed class Utility : StatefulService, IUtilityService
     {
+        #region Constructor
+
         public Utility(StatefulServiceContext context)
             : base(context)
         { }
 
+        #endregion
+
+        #region Public Interface
+
         public async Task<long> Add100MessagesToTheQueue()
         {
             var queue = await StateManager.GetOrAddAsync<IReliableQueue<InterServiceMessage>>("loggingQueue");
-            for(var i = 0; i <= 10000; i++)
+            for(var i = 0; i <= 1000; i++)
             {
                 var msg = new InterServiceMessage() { Name = i.ToString() };
                 using (var tx = StateManager.CreateTransaction())
@@ -40,6 +44,7 @@ namespace Utility
                     await queue.EnqueueAsync(tx, msg);
 
                     await tx.CommitAsync();
+                    await Task.Delay(5);
                 }
             }
             long count;
@@ -51,7 +56,7 @@ namespace Utility
             return await Task.FromResult<long>(count);
         }
 
-        public async Task<bool> InterServiceRqCallAsync(InterServiceMessage msg)
+        public async Task<long> InterServiceRqCallAsync(InterServiceMessage msg)
         {
             ServiceEventSource.Current.Message("Starting Inter Service call on Utility", new object[1] { msg });
             var queue = await StateManager.GetOrAddAsync<IReliableQueue<InterServiceMessage>>("loggingQueue");
@@ -62,7 +67,13 @@ namespace Utility
 
                 await tx.CommitAsync();
             }
-            return await Task.FromResult<bool>(true);
+            long count;
+            using (var tx = StateManager.CreateTransaction())
+            {
+                count = queue.GetCountAsync(tx).Result;
+            }
+
+            return await Task.FromResult<long>(count);
         }
 
         public async Task<bool> StartPoppingOffQueue()
@@ -71,7 +82,7 @@ namespace Utility
             {
                 var queue = await StateManager.GetOrAddAsync<IReliableQueue<InterServiceMessage>>("loggingQueue");
 
-                for (var i = 0; i <= 100; i++)
+                for (var i = 0; i <= 1000; i++)
                 {
                     using (var tx = StateManager.CreateTransaction())
                     {
@@ -79,11 +90,15 @@ namespace Utility
 
                         await tx.CommitAsync();
                     }
-                    Thread.Sleep(10);
+                    Task.Delay(100);
                 }
             });
             return await Task.FromResult(true);
         }
+
+        #endregion
+
+        #region SF Overiddes
 
         /// <summary>
         /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.
@@ -130,5 +145,7 @@ namespace Utility
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
         }
+
+        #endregion
     }
 }
