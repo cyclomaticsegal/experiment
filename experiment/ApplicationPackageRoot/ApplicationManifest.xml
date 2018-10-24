@@ -8,9 +8,9 @@
     <Parameter Name="Data_PartitionCount" DefaultValue="1" />
     <Parameter Name="Data_TargetReplicaSetSize" DefaultValue="5" />
     <Parameter Name="experimentApi_InstanceCount" DefaultValue="-1" />
-    <Parameter Name="Data_PlacementConstraints" DefaultValue="main" />
-    <Parameter Name="Util_PlacementConstraints" DefaultValue="util" />
-    <Parameter Name="Api_PlacementConstraints" DefaultValue="main" />
+    <Parameter Name="Data_PlacementConstraints" DefaultValue="(NodeTypeName==main)" />
+    <Parameter Name="Util_PlacementConstraints" DefaultValue="(NodeTypeName==util)" />
+    <Parameter Name="Api_PlacementConstraints" DefaultValue="(NodeTypeName==main)" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -35,8 +35,8 @@
          The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
     <Service Name="Utility" ServicePackageActivationMode="ExclusiveProcess">
       <StatefulService ServiceTypeName="UtilityType" TargetReplicaSetSize="[Utility_TargetReplicaSetSize]" MinReplicaSetSize="[Utility_MinReplicaSetSize]">
-        <!--<UniformInt64Partition PartitionCount="[Utility_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />-->
         <!--<UniformInt64Partition PartitionCount="[Data_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />-->
+        <!--<UniformInt64Partition PartitionCount="[Utility_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />-->
         <SingletonPartition />
         <PlacementConstraints>[Util_PlacementConstraints]</PlacementConstraints>
       </StatefulService>

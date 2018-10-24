@@ -8,8 +8,8 @@
     <Parameter Name="Data_MinReplicaSetSize" Value="3" />
     <Parameter Name="Data_TargetReplicaSetSize" Value="5" />
     <Parameter Name="experimentApi_InstanceCount" Value="-1" />
-    <Parameter Name="Data_PlacementConstraints" Value="main" />
-    <Parameter Name="Util_PlacementConstraints" Value="util" />
-    <Parameter Name="Api_PlacementConstraints" Value="main" />
+    <Parameter Name="Data_PlacementConstraints" Value="(NodeTypeName==main)" />
+    <Parameter Name="Util_PlacementConstraints" Value="(NodeTypeName==util)" />
+    <Parameter Name="Api_PlacementConstraints" Value="(NodeTypeName==main)" />
   </Parameters>
 </Application>
